@@ -1,0 +1,32 @@
+<%= form_with(model: employee) do |form| %>
+  <% if employee.errors.any? %>
+    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-red-600 text-sm">
+      <% employee.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="space-y-5">
+    <div>
+      <%= form.label :name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.text_field :name, required: true, class: "w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200" %>
+    </div>
+
+    <div class="flex gap-4 w-full">
+      <div class="flex-1">
+        <%= form.label :position, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :position, required: true, class: "w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200" %>
+      </div>
+
+      <div class="flex-1">
+        <%= form.label :salary, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.number_field :salary, required: true, class: "w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 text-right">
+    <%= form.submit class: "bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium px-6 py-2 rounded-lg cursor-pointer" %>
+  </div>
+<% end %>

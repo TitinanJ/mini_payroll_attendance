@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resources :employees do
+    resources :attendances, only: [ :index, :create ]
+  end
+
+  patch "/attendances/:id/checkout", to: "attendances#checkout", as: :checkout_attendance
+
+  root "employees#index"
 end

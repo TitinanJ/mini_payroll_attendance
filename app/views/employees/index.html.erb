@@ -1,0 +1,35 @@
+<div class="max-w-5xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Employees</h1>
+    <%= link_to new_employee_path, class: "bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium px-4 py-2 rounded-lg" do %>
+      <%= heroicon "plus", variant: :outline, options: { class: "h-4 w-4 inline-block mr-1" } %>
+      New Employee
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-200 text-gray-800 uppercase text-xs tracking-wider">
+        <tr>
+          <th class="px-6 py-4">Name</th>
+          <th class="px-6 py-4">Position</th>
+          <th class="px-6 py-4">Salary (THB)</th>
+          <th class="px-6 py-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% if @employees.empty? %>
+          <tr>
+            <td colspan="4" class="px-6 py-16 text-center text-gray-400 text-sm">
+              No employees yet. <%= link_to "Add one", new_employee_path, class: "text-gray-600 underline hover:text-gray-800" %>
+            </td>
+          </tr>
+        <% else %>
+          <% @employees.each do |employee| %>
+            <%= render employee %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

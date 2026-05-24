@@ -1,0 +1,151 @@
+<div class="max-w-5xl mx-auto">
+
+  <%# Back %>
+  <div class="mb-6">
+    <%= link_to employees_path, class: "text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1" do %>
+      <%= heroicon "arrow-left", variant: :outline, options: { class: "h-4 w-4" } %>
+      Back
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 items-stretch">
+
+    <%# Left Column %>
+    <div class="flex flex-col gap-4 h-full">
+
+      <%# Employee Header Card %>
+      <div class="bg-white rounded-xl shadow p-6">
+        <%# Avatar + Name %>
+        <div class="flex items-center gap-4 mb-6">
+          <div class="bg-gray-100 text-gray-600 font-bold rounded-full h-12 w-12 flex items-center justify-center text-lg">
+            <%= @employee.name.split.map(&:first).join.upcase.first(2) %>
+          </div>
+          <div>
+            <p class="font-bold text-gray-800"><%= @employee.name %></p>
+            <span class="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full"><%= @employee.position %></span>
+          </div>
+        </div>
+
+        <%# Edit/Delete %>
+        <div class="flex gap-2 mb-6">
+          <%= link_to edit_employee_path(@employee), class: "flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-1" do %>
+            <%= heroicon "pencil-square", variant: :outline, options: { class: "h-4 w-4" } %>
+            Edit
+          <% end %>
+          <%= link_to @employee, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-1" do %>
+            <%= heroicon "trash", variant: :outline, options: { class: "h-4 w-4" } %>
+            Delete
+          <% end %>
+        </div>
+
+        <%# Employee Info %>
+        <div class="border-t border-gray-100 pt-6">
+          <p class="text-xs text-gray-400 uppercase tracking-wider mb-4">Employee Info</p>
+          <div class="space-y-4">
+            <div class="flex justify-between border-b border-gray-100 pb-4">
+              <span class="text-gray-500 text-sm">Position</span>
+              <span class="text-gray-800 text-sm font-medium"><%= @employee.position %></span>
+            </div>
+            <div class="flex justify-between border-b border-gray-100 pb-4">
+              <span class="text-gray-500 text-sm">Base salary</span>
+              <span class="text-gray-800 text-sm font-medium"><%= number_with_delimiter(@employee.salary) %> THB</span>
+            </div>
+            <div class="flex justify-between pb-5">
+              <span class="text-gray-500 text-sm">Employee ID</span>
+              <span class="text-gray-800 text-sm font-medium">#<%= @employee.id.to_s.rjust(6, "0") %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# View Attendance CTA %>
+      <%= link_to employee_attendances_path(@employee), class: "bg-white rounded-xl shadow p-5 flex justify-between items-center hover:bg-gray-50 transition-colors" do %>
+        <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+          <%= heroicon "calendar-days", variant: :outline, options: { class: "h-4 w-4" } %>
+          View attendance
+        </div>
+        <%= heroicon "arrow-right", variant: :outline, options: { class: "h-4 w-4 text-gray-400" } %>
+      <% end %>
+
+    </div>
+
+    <%# Right Column %>
+    <div class="col-span-2 flex flex-col gap-4">
+
+      <%# Payroll Header + Filter %>
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <p class="font-bold text-gray-800">Payroll</p>
+          <%= form_with url: employee_path(@employee), method: :get, data: { turbo: false } do |form| %>
+            <div class="flex gap-2">
+              <%= form.select :month,
+                  (1..12).map { |m| [Date::MONTHNAMES[m], m] },
+                  { selected: @month },
+                  { class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none",
+                    onchange: "this.form.submit()" } %>
+              <%= form.select :year,
+                  (Date.today.year - 2..Date.today.year).map { |y| [y, y] },
+                  { selected: @year },
+                  { class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none",
+                    onchange: "this.form.submit()" } %>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Stats Row %>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Worked</p>
+            <p class="text-gray-800 font-bold text-xl"><%= @employee.worked_days(@month, @year) %> <span class="text-sm font-normal text-gray-500">days</span></p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">OT Hours</p>
+            <p class="text-gray-800 font-bold text-xl"><%= @employee.total_ot_hours(@month, @year).round(1) %> <span class="text-sm font-normal text-gray-500">hrs</span></p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">OT Pay</p>
+            <p class="text-gray-800 font-bold text-xl"><%= number_with_delimiter(@employee.ot_pay(@month, @year).round(0)) %> <span class="text-sm font-normal text-gray-500">THB</span></p>
+          </div>
+        </div>
+      </div>
+
+      <%# Breakdown Card %>
+      <div class="bg-white rounded-xl shadow p-6">
+        <p class="text-xs text-gray-400 uppercase tracking-wider mb-4">Breakdown</p>
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-gray-400 inline-block"></span>
+              <span class="text-gray-600 text-sm">Base salary</span>
+            </div>
+            <span class="text-gray-800 text-sm font-medium"><%= number_with_delimiter(@employee.salary) %> THB</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-gray-400 inline-block"></span>
+              <span class="text-gray-600 text-sm">OT pay</span>
+            </div>
+            <span class="text-gray-800 text-sm font-medium">+ <%= number_with_delimiter(@employee.ot_pay(@month, @year).round(2)) %> THB</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-red-400 inline-block"></span>
+              <span class="text-gray-600 text-sm">Tax deduction</span>
+            </div>
+            <span class="text-red-500 text-sm font-medium">− <%= number_with_delimiter(@employee.tax.round(2)) %> THB</span>
+          </div>
+        </div>
+
+        <%# Net Pay %>
+        <div class="bg-gray-900 rounded-xl px-6 py-5 flex justify-between items-center">
+          <span class="text-gray-300 text-sm">Net pay — <%= Date::MONTHNAMES[@month].first(3) %> <%= @year %></span>
+          <div class="text-right">
+            <span class="text-white font-bold text-3xl"><%= number_with_delimiter(@employee.net_pay(@month, @year).round(0)) %></span>
+            <span class="text-gray-400 text-sm ml-1">THB</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

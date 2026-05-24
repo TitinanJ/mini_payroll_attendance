@@ -1,0 +1,18 @@
+<tr class="hover:bg-gray-50 transition-colors">
+  <td class="px-6 py-4 font-medium text-gray-800"><%= employee.name %></td>
+  <td class="px-6 py-4 text-gray-600"><%= employee.position %></td>
+  <td class="px-6 py-4 text-gray-600"><%= number_with_delimiter(employee.salary) %></td>
+  <td class="px-6 py-4">
+    <div class="flex gap-2">
+      <%= link_to employee, class: "bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 py-1 rounded-md text-xs font-medium" do %>
+        <%= heroicon "eye", variant: :outline, options: { class: "h-4 w-4" } %>
+      <% end %>
+      <%= link_to edit_employee_path(employee), class: "bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 py-1 rounded-md text-xs font-medium" do %>
+        <%= heroicon "pencil-square", variant: :outline, options: { class: "h-4 w-4" } %>
+      <% end %>
+      <%= link_to employee, data: { turbo_method: :delete, turbo_confirm: "You want to delete \"#{employee.name}\"?" }, class: "bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded-md text-xs font-medium" do %>
+        <%= heroicon "trash", variant: :outline, options: { class: "h-4 w-4" } %>
+      <% end %>
+    </div>
+  </td>
+</tr>
